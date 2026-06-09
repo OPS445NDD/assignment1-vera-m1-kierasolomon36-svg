@@ -1,100 +1,73 @@
 #!/usr/bin/env python3
-
-'''
-OPS445 Assignment 1
-Program: assignment1.py 
-Author: "Student Name"
-Semester: "Fall/Winter/Summer YYYY"
-
-The python code in this file (assignment1.py) is original work written by
-"Student Name". No code in this file is copied from any other source
-except those provided by the course instructor, including any person,
-textbook, or on-line resource. I have not shared this python script
-with anyone or anything except for submission for grading. I understand
-that the Academic Honesty Policy will be enforced and
-violators will be reported and appropriate action will be taken.
-'''
-
+"""
+OPS445 Assignment 1 - Milestone 1
+Author: Kiera Solomon/ksolomon6
+"""
 import sys
 
-def day_of_week(year: int, month: int, date: int) -> str:
-    "Based on the algorithm by Tomohiko Sakamoto"
-    days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] 
-    offset = {1:0, 2:3, 3:2, 4:5, 5:0, 6:3, 7:5, 8:1, 9:4, 10:6, 11:2, 12:4}
-    if month < 3:
-        year -= 1
-    num = (year + year//4 - year//100 + year//400 + offset[month] + date) % 7
-    return days[num]
-
-
-def mon_max(month:int, year:int) -> int:
-    "returns the maximum day for a given month. Includes leap year check"
-    ...
-
-def after(date: str) -> str:
-    '''
-    after() -> date for next day in YYYY-MM-DD string format
-
-    Return the date for the next day of the given date in YYYY-MM-DD format.
-    This function takes care of the number of days in February for leap year.
-    This fucntion has been tested to work for year after 1582
-    '''
-    str_year, str_month, str_day = date.split('-')
-    year = int(str_year)
-    month = int(str_month)
-    day = int(str_day)
+def leap_year(year: int) -> bool:
+    """Return True if the year is a leap year, False otherwise."""
     lyear = year % 4
     if lyear == 0:
-        feb_max = 29 # this is a leap year
+        feb_max = 29
     else:
-        feb_max = 28 # this is not a leap year
+        feb_max = 28
 
     lyear = year % 100
     if lyear == 0:
-        feb_max = 28 # this is not a leap year
+        feb_max = 28
 
     lyear = year % 400
     if lyear == 0:
-        feb_max = 29 # this is a leap year
+        feb_max = 29
+        
+    return feb_max == 29
 
-    mon_max = { 1:31, 2:feb_max, 3:31, 4:30, 5:31, 6:30, 7:31, 8:31, 9:30, 10:31, 11:30, 12:31}
-
-    tmp_day = day + 1  # next day
-
-    if tmp_day > mon_max[month]:
-        to_day = tmp_day % mon_max[month]  # if tmp_day > this month's max, reset to 1 
-        tmp_month = month + 1
+def mon_max(month: int, year: int) -> int:
+    """Return the maximum number of days in a given month and year."""
+    if leap_year(year):
+        feb_max = 29
     else:
-        to_day = tmp_day
-        tmp_month = month + 0
+        feb_max = 28
+        
+    mon_dict = {1: 31, 2: feb_max, 3: 31, 4: 30, 5: 31, 6: 30, 7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31}
+    return mon_dict[month]
 
+def after(date: str) -> str:
+    """Return the date for the next day of the given date."""
+    # Splits the incoming 'YYYY-MM-DD' string into three separate string variables
+    str_year, str_month, str_day = date.split('-')
+    
+    # Converts the string values into integers for math operations
+    year = int(str_year)
+    month = int(str_month)
+    day = int(str_day)
+
+    # Use the refactored mon_max function passing both month and year
+    max_days = mon_max(month, year)
+
+    # Increments the current day by 1 to get the next calendar day
+    tmp_day = day + 1  
+
+    # Checks if the incremented day exceeds the maximum allowed days for the current month
+    if tmp_day > max_days:
+        to_day = tmp_day % max_days  # Roll the day back to 1 if it exceeds month max
+        tmp_month = month + 1        # Move to next month
+    else:
+        to_day = tmp_day             # Keep the incremented day
+        tmp_month = month + 0        # Month remains unchanged
+
+    # Checks if the incremented month exceeds December (month 12)
     if tmp_month > 12:
-        to_month = 1
-        year = year + 1
+        to_month = 1                 # Roll back to January
+        year = year + 1              # Increment the year
     else:
-        to_month = tmp_month + 0
+        to_month = tmp_month + 0     # Keep the updated month
 
+    # Formats the final date into a standard YYYY-MM-DD string with leading zeros
     next_date = f"{year}-{to_month:02}-{to_day:02}"
 
     return next_date
 
-
-def usage():
-    "Print a usage message to the user"
-    ...
-
-
-def leap_year(year: int) -> bool:
-    "return True if the year is a leap year"
-    ...
-
-def valid_date(date: str) -> bool:
-    "check validity of date and return True if valid"
-    ...
-
-def day_count(start_date: str, stop_date: str) -> int:
-    "Loops through range of dates, and returns number of weekend days"
-    ...
-
 if __name__ == "__main__":
-    ...
+    pass
